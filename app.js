@@ -29,6 +29,12 @@ client.addListener('chat', function(channel, user, message) {
   var command = Commands.filter(function(el) {
     return el.trigger === message.toLowerCase();
   });
-  var response = template(command[0].response, {user: user, channel: channel, message: message});
-  client.say(channel, response);
+  if(command[0]){
+    var response = template(command[0].response, {user: user, channel: channel, message: message});
+    client.say(channel, response);
+  }else{
+    var commandString = message.match(/!\w+/g);
+    var error = template("Sorry ${command} is not a valid command.",{command: commandString});
+    client.say(channel, error);
+  }
 });
