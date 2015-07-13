@@ -3,17 +3,6 @@ var config = require('./config');
 var irc = require('twitch-irc');
 var template = require('es6-template-strings');
 
-/**
- ** Available User Roles **
-   staff
-   admin
-   broadcaster
-   global_mod
-   mod `Moderator status will be detected after joining a channel and may take up to 30-45 seconds. (like the chat on twitch.tv)`
-   subscriber
-   turbo
-**/
-
 var Commands = require('./commands');
 
 var clientOptions = {
