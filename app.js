@@ -14,18 +14,7 @@ var template = require('es6-template-strings');
    turbo
 **/
 
-var Commands = [
-  {
-    trigger: '!hello',
-    response: "Hello ${user.username}!",
-    permission: null
-  },
-  {
-    trigger: '!broadcast',
-    response: "Only the broadcaster can use this command!",
-    permission: 'broadcaster'
-  }
-];
+var Commands = require('./commands');
 
 var clientOptions = {
   options: {
