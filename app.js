@@ -32,7 +32,12 @@ client.addListener('chat', function(channel, user, message) {
     return el.trigger === message.toLowerCase();
   });
   var respond = function() {
-    var response = template(command[0].response, {user: user, channel: channel, message: message});
+    var messageToRespondWith = command[0].response;
+    if(typeof(command[0].response) == "function"){
+      messageToRespondWith = command[0].response();
+    }
+    console.log(messageToRespondWith);
+    var response = template(messageToRespondWith, {user: user, channel: channel, message: message});
     client.say(channel, response);
   };
   console.log(user);
