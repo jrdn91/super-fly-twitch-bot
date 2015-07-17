@@ -2,6 +2,7 @@ var config = require('./config');
 
 var irc = require('twitch-irc');
 var template = require('es6-template-strings');
+var Promise = require('promise');
 
 var Commands = require('./commands');
 
@@ -34,9 +35,9 @@ client.addListener('chat', function(channel, user, message) {
   var respond = function() {
     var messageToRespondWith = command[0].response;
     if(typeof(command[0].response) == "function"){
-      messageToRespondWith = command[0].response();
+      console.log('is function');
+      command[0].response().then(console.log('finished'));
     }
-    console.log(messageToRespondWith);
     var response = template(messageToRespondWith, {user: user, channel: channel, message: message});
     client.say(channel, response);
   };
