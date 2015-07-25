@@ -1,5 +1,5 @@
 {
-  "name": "mini_tax",
+  "name": "tax_bot",
   "version": "1.0.0",
   "description": "A Twitch.tv bot that runs custom commands among other things",
   "main": "app.js",
