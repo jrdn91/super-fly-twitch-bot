@@ -76,3 +76,17 @@ client.addListener('chat', function(channel, user, message) {
     }
   }
 });
+
+// Messages
+var donate = setInterval(function(){
+  client.say(config.channels[0], "If you would like to help the stream out, donate at https://www.twitchalerts.com/donate/matax91 . All donations go toward the stream!");
+},(15 * 60000));
+// var multiestream = setInterval(function(){
+//   client.say(config.channels[0], "Check out PhantomPunch808 as well at http://twitch.tv/phantompunch808. You can watch both of us and chat at http://multitwitch.tv/matax91/phantompunch808");
+// },(5 * 60000));
+var g2a = setInterval(function(){
+  client.say(config.channels[0], "Did you know you can buy games cheap and come play with me or other great streamers? You can do so by buying games on g2a. Click this link to help me out and get games much cheaper than you ever expected. Http://g2a.com/matax");
+},(20 * 60000));
+var raidcall = setInterval(function(){
+  client.say(config.channels[0], "You can join me and the community over voice chat for free in RaidCall! Click this link http://www.raidcall.com/go.php?sid=11423321 To download and connect to our free RaidCall group!");
+},(20 * 60000));
