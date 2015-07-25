@@ -6,6 +6,15 @@ var Promise = require('promise');
 
 var Commands = require('./commands');
 
+var beerMessages = [
+  "Well, pour me another beer, thank you.",
+  "I like beer!",
+  "I could use a beer.",
+  "Beer: I like mine like I like my women: dark and bitter!",
+  "Beer: Proof that God wants us to be happy.",
+  "Beer: Nectar of the Gods"
+];
+
 var clientOptions = {
   options: {
     debug: true,
@@ -74,6 +83,13 @@ client.addListener('chat', function(channel, user, message) {
       var error = template("Sorry ${command} is not a valid command.",{command: commandString});
       client.say(channel, error);
     }
+  }
+});
+
+// Beer listener
+client.addListener('chat', function(channel, user, message){
+  if(message.indexOf('beer') >= 0){
+    client.say(channel, beerMessages[Math.floor(Math.random() * (beerMessages.length))]);
   }
 });
 
