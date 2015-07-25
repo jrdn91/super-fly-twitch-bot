@@ -70,7 +70,9 @@ client.addListener('chat', function(channel, user, message) {
   }else{
     // A command was not found so let the user know
     var commandString = message.match(/!\w+/g);
-    var error = template("Sorry ${command} is not a valid command.",{command: commandString});
-    client.say(channel, error);
+    if (commandString) {
+      var error = template("Sorry ${command} is not a valid command.",{command: commandString});
+      client.say(channel, error);
+    }
   }
 });
