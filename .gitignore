@@ -3,3 +3,4 @@ config.js
 commands.js
 messages.js
 database
+functions.js
