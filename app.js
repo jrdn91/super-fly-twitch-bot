@@ -1,6 +1,6 @@
 var config = require('./config');
 
-var irc = require('twitch-irc');
+var irc = require('tmi.js');
 var template = require('es6-template-strings');
 var Promise = require('promise');
 
@@ -43,7 +43,10 @@ var functions = require('./functions');
 
 client.connect();
 
-client.addListener('chat', function(channel, user, message){
+client.addListener('chat', function(channel, user, message, self){
+  if(self){
+    return true;
+  }
   // Return if there is not a command
   if(!message.match(/!\w+/g)){
     return true;
@@ -60,7 +63,7 @@ client.addListener('chat', function(channel, user, message){
 
   // Check if command is an admin command
   if(adminCommands.indexOf(command) > -1){
-    if(user.special.indexOf('broadcaster') == -1 && user.special.indexOf('mod') == -1){
+    if(user.username != config.channels[0] && user['user-type'] != 'mod'){
       // Return if user does not have permission
       client.say(channel, "You do not have permission to use that command.");
       return true;
@@ -70,10 +73,10 @@ client.addListener('chat', function(channel, user, message){
       case '!addcom':
         var userLevel = null;
         var commandTrigger = words[1];
-        var commandResponse = message.match(/([A-Z])[\w\s]+/)[0];
-        if(words[1].match(/-ul=/g)){
+        var commandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
+        if(words[1].match(/-ul=(\w+)/)){
           // User level for command is defined
-          userLevel = words[1].split(/-ul=/g)[1];
+          userLevel = words[1].match(/-ul=(\w+)/)[1];
           commandTrigger = words[2];
         }
         db.commands.insert({
@@ -119,14 +122,12 @@ client.addListener('chat', function(channel, user, message){
     // If a command is returned from the database
     if(docs.length > 0){
       // Check if user has permission to use this command
-      if(!docs[0].permission || user.special.indexOf('broadcaster') > -1){
+      if(!docs[0].permission || user['user-type'] == 'broadcaster'){
         // There is not a permission or the user is the broadcaster
         respond(docs);
       }else{
         // There is a permission
-        console.log(user);
-        console.log(docs[0].permission);
-        if(user.special.indexOf(docs[0].permission) > -1){
+        if(user['user-type'] == docs[0].permission){
           respond(docs);
         }else{
           var permissionError = template("You do not have permission to use the ${command} command.",{command: command});
