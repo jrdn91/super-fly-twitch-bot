@@ -88,6 +88,14 @@ client.addListener('chat', function(channel, user, message, self){
           client.say(channel, "Command "+docs.trigger+" has been created.");
         });
       break;
+      case '!delcom':
+        commands.remove({
+          trigger: words[1]
+        }, {}, function(err,docs){
+          var permissionError = template("The ${command} command has been removed.",{command: words[1]});
+          client.say(channel, permissionError);
+        });
+      break;
       default:
         client.say(channel, "This command is not yet implemented.");
       break;
