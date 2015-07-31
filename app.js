@@ -31,12 +31,9 @@ var client = new irc.client(clientOptions);
 // Database
 var Datastore = require('nedb');
 
-db = {};
-db.commands = new Datastore('database/commands.db');
-db.messages = new Datastore('database/messages.db');
+var commands = new Datastore({ filename: 'database/commands.db', autoload: true });
+var messages = new Datastore({ filename: 'database/messages.db', autoload: true });
 
-db.commands.loadDatabase();
-db.messages.loadDatabase();
 
 // Command Functions
 var functions = require('./functions');
@@ -79,7 +76,7 @@ client.addListener('chat', function(channel, user, message, self){
           userLevel = words[1].match(/-ul=(\w+)/)[1];
           commandTrigger = words[2];
         }
-        db.commands.insert({
+        commands.insert({
           trigger: commandTrigger,
           response: commandResponse,
           permission: userLevel
@@ -115,7 +112,7 @@ client.addListener('chat', function(channel, user, message, self){
   };
 
   // Lookup command from the database
-  db.commands.find({trigger: command}, function(err, docs){
+  commands.find({trigger: command}, function(err, docs){
     if(err){
       return true;
     }
