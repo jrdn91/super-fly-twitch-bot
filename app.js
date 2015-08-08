@@ -4,7 +4,6 @@ var irc = require('tmi.js');
 var template = require('es6-template-strings');
 var Promise = require('promise');
 
-var Commands = require('./commands');
 var Messages = require('./messages');
 
 var beerMessages = [
