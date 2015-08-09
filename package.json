@@ -2,7 +2,7 @@
   "name": "tax_bot",
   "version": "1.0.0",
   "description": "A Twitch.tv bot that runs custom commands among other things",
-  "main": "app.js",
+  "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
