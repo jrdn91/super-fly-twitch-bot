@@ -55,7 +55,7 @@ client.addListener('chat', function(channel, user, message, self){
   var command = words[0];
 
   // Commands that are for admins only
-  var adminCommands = ['!addcom','!editcom','!delcom','!addmes','!editmes','!delmes'];
+  var adminCommands = ['!addcom','!editcom','!delcom'];
 
   // Check if command is an admin command
   if(adminCommands.indexOf(command) > -1){
