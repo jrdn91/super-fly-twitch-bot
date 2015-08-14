@@ -1,10 +1,9 @@
 var config = require('./config');
 
 var irc = require('tmi.js');
+var fs = require('fs');
 var template = require('es6-template-strings');
 var Promise = require('promise');
-
-var Messages = require('./messages');
 
 var beerMessages = [
   "Well, pour me another beer, thank you.",
@@ -168,11 +167,16 @@ client.addListener('chat', function(channel, user, message){
 var minutes = 0;
 var messagesInterval = setInterval(function(){
   minutes++;
-  for(var i in Messages){
-    if(Messages[i].active){
-      if(minutes % Messages[i].interval === 0){
-        client.say(config.channels[0], Messages[i].message);
+  var Messages;
+  fs.readFile('./messages.json', 'utf8', function (err, data) {
+    if (err) throw err;
+    Messages = JSON.parse(data);
+    for(var i in Messages){
+      if(Messages[i].active){
+        if(minutes % Messages[i].interval === 0){
+          client.say(config.channels[0], Messages[i].message);
+        }
       }
     }
-  }
+  });
 },60000);
