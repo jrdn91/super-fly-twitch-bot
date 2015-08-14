@@ -31,7 +31,6 @@ var client = new irc.client(clientOptions);
 var Datastore = require('nedb');
 
 var commands = new Datastore({ filename: 'database/commands.db', autoload: true });
-var messages = new Datastore({ filename: 'database/messages.db', autoload: true });
 
 
 // Command Functions
