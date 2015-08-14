@@ -87,12 +87,23 @@ client.addListener('chat', function(channel, user, message, self){
           client.say(channel, "Command "+docs.trigger+" has been created.");
         });
       break;
+      case '!editcom':
+        var editCommandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
+        commands.update({
+          trigger: words[1]
+        }, {
+          $set: {response: editCommandResponse},
+        }, function(err,numUpdated){
+          var updatedMessage = template("The ${command} command has been updated.",{command: words[1]});
+          client.say(channel, updatedMessage);
+        });
+      break;
       case '!delcom':
         commands.remove({
           trigger: words[1]
         }, {}, function(err,docs){
-          var permissionError = template("The ${command} command has been removed.",{command: words[1]});
-          client.say(channel, permissionError);
+          var deletedMessage = template("The ${command} command has been removed.",{command: words[1]});
+          client.say(channel, deletedMessage);
         });
       break;
       default:
