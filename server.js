@@ -10,9 +10,8 @@ var apiVersion = 1;
 var app = express();
 
 // Body Parser
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // CORS
 var allowCrossDomain = function(req, res, next) {
