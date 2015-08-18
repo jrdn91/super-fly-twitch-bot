@@ -1,11 +1,11 @@
 var express = require('express');
-// var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 // var passport = require('passport');
 
 var apiVersion = 1;
 
-// mongoose.connect('mongodb://localhost:27017/beerlocker');
+mongoose.connect('mongodb://localhost:27017/twitchbot');
 
 var app = express();
 
