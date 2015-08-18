@@ -20,18 +20,24 @@ var chatBot = new irc.client(chatBotOptions);
 module.exports.startBot = function(req,res){
   // Connect chatBot
   chatBot.connect();
-  chatBot.on('join', function(channel, username){
+  chatBot.once('join', function(channel, username){
     chatBot.say(channel, 'Hello there!');
-    res.json({action:'joined'});
+    if (req.socket.writable)
+      res.json({action:'joined'});
   });
 };
 module.exports.stopBot = function(req,res){
   // Disconnect chatBot
   chatBot.say(config.channels[0],"I'm out!");
   chatBot.disconnect();
-  res.json({action:'disconnecting'});
+  chatBot.once('disconnected', function(reason){
+    if (req.socket.writable)
+      res.json({action:'disconnected',reason:reason});
+  });
 };
-// chatBot.on('disconnected',function(reason){
-//   console.log('disconnected');
-//   res.json({action:'disconnected',reason: reason});
-// });
+chatBot.on('chat', function(channel, user, message, self){
+  if(self){
+    return true;
+  }
+  chatBot.say(channel, "Kappa");
+});
