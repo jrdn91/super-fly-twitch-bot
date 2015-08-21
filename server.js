@@ -1,6 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var logger = require('morgan');
 // var passport = require('passport');
 
 var apiVersion = 1;
@@ -12,6 +13,9 @@ var app = express();
 // Body Parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Logging
+app.use(logger('dev'));
 
 // CORS
 var allowCrossDomain = function(req, res, next) {

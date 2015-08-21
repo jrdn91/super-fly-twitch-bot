@@ -18,5 +18,8 @@
     "q": "^1.4.1",
     "tmi.js": "0.0.18",
     "unirest": "^0.4.2"
+  },
+  "devDependencies": {
+    "morgan": "^1.6.1"
   }
 }
