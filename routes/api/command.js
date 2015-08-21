@@ -13,10 +13,10 @@ module.exports.addCommand = function(req, res) {
 
 module.exports.getAllCommands = function(req, res) {
   Command.find(function(err, commands) {
-    if (err) {
-      res.send(err);
-    }
-    res.json({commands: commands});
+      if (err) {
+        res.send(err);
+      }
+      res.json({commands: commands});
   });
 };
 
