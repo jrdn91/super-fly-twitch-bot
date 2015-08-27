@@ -24,7 +24,7 @@ router.route('/messages')
 	.get(function(req,res) { message.getAllMessages(req,res) });
 
 router.route('/messages/:message_id')
-  .put(function(req,res) { messages.updateMessage(req,res,req.params.message_id) })
-  .delete(function(req,res) { messages.deleteMessage(req,res,req.params.message_id) });
+  .put(function(req,res) { message.updateMessage(req,res,req.params.message_id) })
+  .delete(function(req,res) { message.deleteMessage(req,res,req.params.message_id) });
 
 module.exports = router;
