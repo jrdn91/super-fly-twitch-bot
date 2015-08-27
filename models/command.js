@@ -3,9 +3,9 @@ var mongoose = require('mongoose');
 
 // Define our beer schema
 var CommandSchema   = new mongoose.Schema({
-  trigger: String,
-  response: String,
-  permission: String
+  commandTrigger: String,
+  commandResponse: String,
+  commandPermission: String
 });
 
 // Export the Mongoose model
