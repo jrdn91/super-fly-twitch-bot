@@ -8,6 +8,7 @@ var message = require('./api/message');
 
 // Endpoints
 router.route('/bot')
+  .get(function(req,res) { bot.checkConnectionStatus(req,res) })
   .post(function(req,res) { bot.startBot(req,res) })
   .delete(function(req,res) { bot.stopBot(req,res) });
 
