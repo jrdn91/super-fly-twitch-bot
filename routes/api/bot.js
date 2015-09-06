@@ -63,6 +63,73 @@ chatBot.on('chat', function(channel, user, message, self){
   // command variable
   var command = words[0];
 
+  // Commands that are for admins only
+  var adminCommands = ['!addcom','!editcom','!delcom'];
+
+  // Check if command is an admin command
+  if(adminCommands.indexOf(command) > -1){
+    console.log('is admin command');
+    if(user.username != config.channels[0] && user['user-type'] != 'mod'){
+      // Return if user does not have permission
+      chatBot.say(channel, "You do not have permission to use that command.");
+      return true;
+    }
+    console.log('has permission');
+    // Switch over the command and do admin functions
+    switch (command) {
+      case '!addcom':
+        console.log('is add command');
+        var userLevel = null;
+        var commandTrigger = words[1];
+        var commandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
+        if(words[1].match(/-ul=(\w+)/)){
+          // User level for command is defined
+          userLevel = words[1].match(/-ul=(\w+)/)[1];
+          commandTrigger = words[2];
+        }
+        var newCommand = new Command({commandTrigger:commandTrigger,commandResponse:commandResponse,commandPermission:userLevel});
+        newCommand.save(function(err){
+          if(err) {
+            chatBot.say(channel, "There was a problem creating this command.");
+            return true;
+          }
+          chatBot.say(channel, "Command "+commandTrigger+" has been created.");
+        });
+      break;
+      case '!editcom':
+        var commandResponseEdit = message.match(/!\S+\s*([^!]+)$/)[1];
+        Command.update({
+          commandTrigger: words[1]
+        }, {
+          commandResponse: commandResponseEdit
+        }, function(err){
+          if(err) {
+            chatBot.say(channel, "There was a problem editing this command.");
+            return true;
+          }
+          var updatedMessage = template("The ${command} command has been updated.",{command: words[1]});
+          chatBot.say(channel, updatedMessage);
+        });
+      break;
+      case '!delcom':
+        Command.findOneAndRemove({
+          commandTrigger: words[1]
+        }, function(err){
+          if(err) {
+            chatBot.say(channel, "There was a problem deleting this command.");
+            return true;
+          }
+          var deletedMessage = template("The ${command} command has been removed.",{command: words[1]});
+          chatBot.say(channel, deletedMessage);
+        });
+      break;
+      default:
+        chatBot.say(channel, "This command is not yet implemented.");
+      break;
+    }
+    return true;
+  }
+
   // Respond function
   var respond = function(docs){
     var chatResponse = docs[0].commandResponse;

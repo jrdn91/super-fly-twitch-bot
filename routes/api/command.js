@@ -4,6 +4,8 @@ var Command = require('../../models/command');
 module.exports.addCommand = function(req, res) {
   var command = new Command(req.body.command);
 
+  console.log(req.body.command);
+
   command.save(function(err) {
     if (err)
       res.send(err);
