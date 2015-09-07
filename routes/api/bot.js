@@ -35,35 +35,23 @@ module.exports.startBot = function(req,res){
       res.json({action:'joined'});
   });
   // Messages
-  minutes = 0;
-  messagesInterval = setInterval(function(){
-    console.log('tick');
-    minutes++;
-    var Messages;
-    Message.find({active: true},function(err,docs){
-      if(err){
-        console.log(err);
-        return true;
-      }
-      console.log(docs);
-      for(i in docs){
-        if(minutes % docs[i].interval === 0){
-          chatBot.say(config.channels[0], docs[i].message);
-        }
-      }
-    });
-    // fs.readFile('./messages.json', 'utf8', function (err, data) {
-    //   if (err) throw err;
-    //   Messages = JSON.parse(data);
-    //   for(var i in Messages){
-    //     if(Messages[i].active){
-    //       if(minutes % Messages[i].interval === 0){
-    //         client.say(config.channels[0], Messages[i].message);
-    //       }
-    //     }
-    //   }
-    // });
-  },60000);
+  // minutes = 0;
+  // messagesInterval = setInterval(function(){
+  //   minutes++;
+  //   var Messages;
+  //   Message.find({active: true}).$where(minutes+' % this.interval === 0').exec(function(err,docs){
+  //     if(err){
+  //       console.log(err);
+  //       return true;
+  //     }
+  //     console.log(docs);
+  //     if(docs.length > 0){
+  //       for(var i in docs){
+  //         chatBot.say(config.channels[0], docs[i].messageContent);
+  //       }
+  //     }
+  //   });
+  // },60000);
 };
 module.exports.stopBot = function(req,res){
   // Disconnect chatBot
@@ -71,7 +59,7 @@ module.exports.stopBot = function(req,res){
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
-    clearInterval(messagesInterval);
+    // clearInterval(messagesInterval);
     if (req.socket.writable)
       res.json({action:'disconnected',reason:reason});
   });
