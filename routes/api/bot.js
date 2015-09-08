@@ -4,6 +4,9 @@ var mongoose = require('mongoose');
 var Command = require('../../models/command');
 var Message = require('../../models/message');
 
+// Regex's
+var urlRegex = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?/;
+
 var irc = require('tmi.js');
 // var fs = require('fs');
 var template = require('es6-template-strings');
@@ -77,6 +80,11 @@ chatBot.on('chat', function(channel, user, message, self){
   }
   // Return if there is not a command
   if(!message.match(/!\w+/g)){
+    // Moderate messages
+    if(urlRegex.test(message)){
+      chatBot.timeout(channel, user.username, 1);
+      chatBot.say(channel, "Please do not post URL's in the chat.");
+    }
     return true;
   }
 
