@@ -82,8 +82,6 @@ chatBot.on('chat', function(channel, user, message, self){
   var isBroadcaster = (user.username == config.channels[0] ? true : false);
   var isMod = (user['user-type'] == 'mod' ? true : false);
 
-  console.log(isBroadcaster);
-  console.log(isMod);
   // Return if there is not a command
   if(!message.match(/!\w+/g)){
     // Moderate messages
