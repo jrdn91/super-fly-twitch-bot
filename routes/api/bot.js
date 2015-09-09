@@ -85,7 +85,7 @@ chatBot.on('chat', function(channel, user, message, self){
   // Return if there is not a command
   if(!message.match(/!\w+/g)){
     // Moderate messages
-    if(urlRegex.test(message)){
+    if(urlRegex.test(message) && (!isBroadcaster && !isMod)){
       chatBot.timeout(channel, user.username, 1);
       chatBot.say(channel, "Please do not post URL's in the chat.");
     }
