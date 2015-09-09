@@ -78,6 +78,12 @@ chatBot.on('chat', function(channel, user, message, self){
   if(self){
     return true;
   }
+  // Check if is broadcaster or mod
+  var isBroadcaster = (user.username == config.channels[0] ? true : false);
+  var isMod = (user['user-type'] == 'mod' ? true : false);
+
+  console.log(isBroadcaster);
+  console.log(isMod);
   // Return if there is not a command
   if(!message.match(/!\w+/g)){
     // Moderate messages
@@ -100,7 +106,7 @@ chatBot.on('chat', function(channel, user, message, self){
   // Check if command is an admin command
   if(adminCommands.indexOf(command) > -1){
     console.log('is admin command');
-    if(user.username != config.channels[0] && user['user-type'] != 'mod'){
+    if(!isBroadcaster && !isMod){
       // Return if user does not have permission
       chatBot.say(channel, "You do not have permission to use that command.");
       return true;
