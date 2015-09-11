@@ -83,7 +83,7 @@ chatBot.on('chat', function(channel, user, message, self){
   var isMod = (user['user-type'] == 'mod' ? true : false);
 
   // Return if there is not a command
-  if(!message.match(/!\w+/g)){
+  if(!message.match(/^!\w+/g)){
     // Moderate messages
     if(urlRegex.test(message) && (!isBroadcaster && !isMod)){
       chatBot.timeout(channel, user.username, 1);
