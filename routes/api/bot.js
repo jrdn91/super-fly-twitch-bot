@@ -37,8 +37,8 @@ module.exports.startBot = function(req,res){
   chatBot.connect();
   chatBot.once('join', function(channel, username){
     isConnected = true;
-    chatBot.say(channel, 'Hello there!');
     chatBot.color("channel", "Firebrick");
+    chatBot.action(channel, 'Hello there!');
     if (req.socket.writable)
       res.json({action:'joined'});
   });
@@ -55,7 +55,7 @@ module.exports.startBot = function(req,res){
       console.log(docs);
       if(docs.length > 0){
         for (var i = 0; i < docs.length; i++) {
-          chatBot.say(config.channels[0], docs[i].messageContent);
+          chatBot.action(config.channels[0], docs[i].messageContent);
         }
       }
     });
@@ -63,7 +63,7 @@ module.exports.startBot = function(req,res){
 };
 module.exports.stopBot = function(req,res){
   // Disconnect chatBot
-  chatBot.say(config.channels[0],"I'm out!");
+  chatBot.action(config.channels[0],"I'm out!");
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
@@ -92,7 +92,7 @@ chatBot.on('chat', function(channel, user, message, self){
     // Moderate messages
     if(urlRegex.test(message) && (!isBroadcaster && !isMod)){
       chatBot.timeout(channel, user.username, 1);
-      chatBot.say(channel, "Please do not post URL's in the chat.");
+      chatBot.action(channel, "Please do not post URL's in the chat.");
     }
     return true;
   }
@@ -110,7 +110,7 @@ chatBot.on('chat', function(channel, user, message, self){
   if(specialCommands.indexOf(command) > -1){
     if(!isBroadcaster && !isMod){
       // Return if user does not have permission
-      chatBot.say(channel, "You do not have permission to use that command.");
+      chatBot.action(channel, "You do not have permission to use that command.");
       return true;
     }
     // Switch over the command and do admin functions
@@ -127,10 +127,10 @@ chatBot.on('chat', function(channel, user, message, self){
         var newCommand = new Command({commandTrigger:commandTrigger,commandResponse:commandResponse,commandPermission:userLevel});
         newCommand.save(function(err){
           if(err) {
-            chatBot.say(channel, "There was a problem creating this command.");
+            chatBot.action(channel, "There was a problem creating this command.");
             return true;
           }
-          chatBot.say(channel, "Command "+commandTrigger+" has been created.");
+          chatBot.action(channel, "Command "+commandTrigger+" has been created.");
         });
       break;
       case '!editcom':
@@ -141,11 +141,11 @@ chatBot.on('chat', function(channel, user, message, self){
           commandResponse: commandResponseEdit
         }, function(err){
           if(err) {
-            chatBot.say(channel, "There was a problem editing this command.");
+            chatBot.action(channel, "There was a problem editing this command.");
             return true;
           }
           var updatedMessage = template("The ${command} command has been updated.",{command: words[1]});
-          chatBot.say(channel, updatedMessage);
+          chatBot.action(channel, updatedMessage);
         });
       break;
       case '!delcom':
@@ -153,11 +153,11 @@ chatBot.on('chat', function(channel, user, message, self){
           commandTrigger: words[1]
         }, function(err){
           if(err) {
-            chatBot.say(channel, "There was a problem deleting this command.");
+            chatBot.action(channel, "There was a problem deleting this command.");
             return true;
           }
           var deletedMessage = template("The ${command} command has been removed.",{command: words[1]});
-          chatBot.say(channel, deletedMessage);
+          chatBot.action(channel, deletedMessage);
         });
       break;
       case '!joinbank':
@@ -170,7 +170,7 @@ chatBot.on('chat', function(channel, user, message, self){
           if(foundUser){
             // The user is already in the bank
             var memberMessage = template("You are already in the bank, you've been a member since ${time} and you have logged ${minutes} minutes and have a total of ${currency} Tax Dollars.",{time: Moment(foundUser.created_at).format('MMMM DD, YYYY'),minutes: foundUser.minutes, currency: foundUser.currency});
-            chatBot.say(channel, memberMessage);
+            chatBot.action(channel, memberMessage);
           }else{
             // The user is not in the bank
             var newUser = new User({
@@ -182,7 +182,7 @@ chatBot.on('chat', function(channel, user, message, self){
                 return true;
               }
               var joinMessage = template("You have been added to the bank.");
-              chatBot.say(channel, joinMessage);
+              chatBot.action(channel, joinMessage);
             });
           }
         });
@@ -194,7 +194,7 @@ chatBot.on('chat', function(channel, user, message, self){
             res.send(err);
           }
           var leaveMessage = template("You have been removed from the bank and will no longer accumulate currency.");
-          chatBot.say(channel, leaveMessage);
+          chatBot.action(channel, leaveMessage);
         });
       break;
       case '!balance':
@@ -208,17 +208,17 @@ chatBot.on('chat', function(channel, user, message, self){
             console.log('found user');
             // The user has been found in the bank
             var memberMessage = template("You have a total of ${currency} Tax Dollars and have logged ${minutes} minutes. You have been a member since ${time}.",{time: Moment(foundUser.created_at).format('MMMM DD, YYYY'),minutes: foundUser.minutes, currency: foundUser.currency});
-            chatBot.say(channel, memberMessage);
+            chatBot.action(channel, memberMessage);
           }else{
             console.log('did not find user');
             // The user is not in the bank
             var noUserMessage = template("You are not in the bank and do not have any currency, you can join the bank by typing !joinbank.");
-            chatBot.say(channel, noUserMessage);
+            chatBot.action(channel, noUserMessage);
           }
         });
       break;
       default:
-        chatBot.say(channel, "This command is not yet implemented.");
+        chatBot.action(channel, "This command is not yet implemented.");
       break;
     }
     return true;
@@ -228,7 +228,7 @@ chatBot.on('chat', function(channel, user, message, self){
   var respond = function(docs){
     var chatResponse = docs[0].commandResponse;
     var response = template(chatResponse, {user: user.username, channel: channel, message: message});
-    chatBot.say(channel, response);
+    chatBot.action(channel, response);
   };
 
   // Lookup command from the database
@@ -248,14 +248,14 @@ chatBot.on('chat', function(channel, user, message, self){
           respond(docs);
         }else{
           var permissionError = template("You do not have permission to use the ${command} command.",{command: command});
-          chatBot.say(channel, permissionError);
+          chatBot.action(channel, permissionError);
         }
       }
     }else{
       // Command was not found
       var commandString = message.match(/!\w+/g);
       var error = template("Sorry ${command} is not a valid command.",{command: commandString});
-      chatBot.say(channel, error);
+      chatBot.action(channel, error);
     }
   });
 });
