@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Command = require('../../models/command');
 var Message = require('../../models/message');
 
+
 // Regex's
 var urlRegex = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?/;
 
@@ -103,17 +104,14 @@ chatBot.on('chat', function(channel, user, message, self){
 
   // Check if command is an admin command
   if(adminCommands.indexOf(command) > -1){
-    console.log('is admin command');
     if(!isBroadcaster && !isMod){
       // Return if user does not have permission
       chatBot.say(channel, "You do not have permission to use that command.");
       return true;
     }
-    console.log('has permission');
     // Switch over the command and do admin functions
     switch (command) {
       case '!addcom':
-        console.log('is add command');
         var userLevel = null;
         var commandTrigger = words[1];
         var commandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
