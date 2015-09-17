@@ -103,7 +103,7 @@ chatBot.on('chat', function(channel, user, message, self){
   var command = words[0];
 
   // Commands that are for admins only
-  var specialCommands = ['!addcom','!editcom','!delcom','!joinbank'];
+  var specialCommands = ['!addcom','!editcom','!delcom','!joinbank','!balance','!leavebank'];
 
   // Check if command is an admin command
   if(specialCommands.indexOf(command) > -1){
@@ -168,6 +168,8 @@ chatBot.on('chat', function(channel, user, message, self){
           }
           if(foundUser){
             // The user is already in the bank
+            var memberMessage = template("You are already in the bank, you've been a member since ${time} and you have logged ${minutes} minutes and have a total of ${currency} Tax Dollars.",{time: Moment(foundUser.created_at).format('MMMM DD, YYYY'),minutes: foundUser.minutes, currency: foundUser.currency});
+            chatBot.say(channel, memberMessage);
           }else{
             // The user is not in the bank
             var newUser = new User({
@@ -178,9 +180,39 @@ chatBot.on('chat', function(channel, user, message, self){
                 console.log(err);
                 return true;
               }
-              var joinMessage = template("You have been added to the bank");
+              var joinMessage = template("You have been added to the bank.");
               chatBot.say(channel, joinMessage);
             });
+          }
+        });
+      break;
+      case '!leavebank':
+        // user wants to start collecting currency
+        User.findOne({username: user.username}).remove(function(err){
+          if (err) {
+            res.send(err);
+          }
+          var leaveMessage = template("You have been removed from the bank and will no longer accumulate currency.");
+          chatBot.say(channel, leaveMessage);
+        });
+      break;
+      case '!balance':
+        // user wants to start collecting currency
+        User.findOne({username: user.username},function(err, foundUser){
+          if (err) {
+            console.log(err);
+            return true;
+          }
+          if(foundUser){
+            console.log('found user');
+            // The user has been found in the bank
+            var memberMessage = template("You have a total of ${currency} Tax Dollars and have logged ${minutes} minutes. You have been a member since ${time}.",{time: Moment(foundUser.created_at).format('MMMM DD, YYYY'),minutes: foundUser.minutes, currency: foundUser.currency});
+            chatBot.say(channel, memberMessage);
+          }else{
+            console.log('did not find user');
+            // The user is not in the bank
+            var noUserMessage = template("You are not in the bank and do not have any currency, you can join the bank by typing !joinbank.");
+            chatBot.say(channel, noUserMessage);
           }
         });
       break;
