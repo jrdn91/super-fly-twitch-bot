@@ -5,6 +5,7 @@ var router = express.Router();
 var bot = require('./api/bot');
 var commands = require('./api/command');
 var message = require('./api/message');
+var user = require('./api/user');
 
 // Endpoints
 router.route('/bot')
@@ -27,5 +28,13 @@ router.route('/messages')
 router.route('/messages/:message_id')
   .put(function(req,res) { message.updateMessage(req,res,req.params.message_id) })
   .delete(function(req,res) { message.deleteMessage(req,res,req.params.message_id) });
+
+router.route('/users')
+  .post(function(req,res) { user.addUser(req,res) })
+  .get(function(req,res) { user.getAllUsers(req,res) });
+
+router.route('/users/:username')
+  .put(function(req,res) { user.updateUser(req,res,req.params.username) })
+  .delete(function(req,res) { user.deleteUser(req,res,req.params.username) });
 
 module.exports = router;
