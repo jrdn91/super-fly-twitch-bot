@@ -100,10 +100,10 @@ chatBot.on('chat', function(channel, user, message, self){
   var command = words[0];
 
   // Commands that are for admins only
-  var adminCommands = ['!addcom','!editcom','!delcom'];
+  var specialCommands = ['!addcom','!editcom','!delcom','!joinbank'];
 
   // Check if command is an admin command
-  if(adminCommands.indexOf(command) > -1){
+  if(specialCommands.indexOf(command) > -1){
     if(!isBroadcaster && !isMod){
       // Return if user does not have permission
       chatBot.say(channel, "You do not have permission to use that command.");
