@@ -166,7 +166,7 @@ chatBot.on('chat', function(channel, user, message, self){
   // Respond function
   var respond = function(docs){
     var chatResponse = docs[0].commandResponse;
-    var response = template(chatResponse, {user: user, channel: channel, message: message});
+    var response = template(chatResponse, {user: user.username, channel: channel, message: message});
     chatBot.say(channel, response);
   };
 
