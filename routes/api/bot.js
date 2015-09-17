@@ -1,5 +1,7 @@
 var config = require('../../config');
 
+var Moment = require('moment');
+
 var mongoose = require('mongoose');
 var Command = require('../../models/command');
 var Message = require('../../models/message');
