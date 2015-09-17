@@ -38,6 +38,7 @@ module.exports.startBot = function(req,res){
   chatBot.once('join', function(channel, username){
     isConnected = true;
     chatBot.say(channel, 'Hello there!');
+    chatBot.color("channel", "Firebrick");
     if (req.socket.writable)
       res.json({action:'joined'});
   });
