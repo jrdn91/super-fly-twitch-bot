@@ -3,6 +3,7 @@ var config = require('../../config');
 var mongoose = require('mongoose');
 var Command = require('../../models/command');
 var Message = require('../../models/message');
+var User = require('../../models/user');
 
 
 // Regex's
@@ -154,6 +155,31 @@ chatBot.on('chat', function(channel, user, message, self){
           }
           var deletedMessage = template("The ${command} command has been removed.",{command: words[1]});
           chatBot.say(channel, deletedMessage);
+        });
+      break;
+      case '!joinbank':
+        // user wants to start collecting currency
+        User.findOne({username: user.username},function(err, foundUser){
+          if (err) {
+            console.log(err);
+            return true;
+          }
+          if(foundUser){
+            // The user is already in the bank
+          }else{
+            // The user is not in the bank
+            var newUser = new User({
+              username: user.username
+            });
+            newUser.save(function(err) {
+              if (err) {
+                console.log(err);
+                return true;
+              }
+              var joinMessage = template("You have been added to the bank");
+              chatBot.say(channel, joinMessage);
+            });
+          }
         });
       break;
       default:
