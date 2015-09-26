@@ -32,11 +32,22 @@ var isConnected = false;
 var minutes = null;
 var messagesInterval = null;
 
+var currencyInterval = null;
+var lastViewers = [];
+
+var activeChatters = {};
+
 module.exports.startBot = function(req,res){
   // Connect chatBot
   chatBot.connect();
   chatBot.once('join', function(channel, username){
     isConnected = true;
+    chatBot.api({
+      url:"http://tmi.twitch.tv/group/user/totally_rand0ms/chatters",
+    },function(req,res,body){
+      var currentViewers = JSON.parse(body)
+      lastViewers = currentViewers.chatters.viewers;
+    });
     chatBot.color("channel", "Firebrick");
     chatBot.action(channel, 'Hello there!');
     if (req.socket.writable)
@@ -52,12 +63,33 @@ module.exports.startBot = function(req,res){
         console.log(err);
         return true;
       }
-      console.log(docs);
       if(docs.length > 0){
         for (var i = 0; i < docs.length; i++) {
           chatBot.action(config.channels[0], docs[i].messageContent);
         }
       }
+    });
+  },60000);
+  // Currency
+  currencyInterval = setInterval(function(){
+    chatBot.api({
+      url:"http://tmi.twitch.tv/group/user/"+config.channels[0]+"/chatters",
+    },function(req,res,body){
+      var body = JSON.parse(body);
+      var currentViewers = body.chatters.viewers.concat(body.chatters.moderators);
+      console.log(body);
+      function exists(value) {
+        return lastViewers.indexOf(value) >= 0;
+      }
+      var activeViewers = currentViewers.filter(exists);
+      User.update({'username':{$in:activeViewers}},{$inc:{currency:1,minutes:1}},{ multi: true },function(err,docs){
+        if(err){
+          console.log(err);
+          return true;
+        }
+        console.log(docs);
+      });
+      lastViewers = currentViewers;
     });
   },60000);
 };
@@ -67,6 +99,7 @@ module.exports.stopBot = function(req,res){
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
+    lastViewers = null;
     // clearInterval(messagesInterval);
     if (req.socket.writable)
       res.json({action:'disconnected',reason:reason});
@@ -86,6 +119,11 @@ chatBot.on('chat', function(channel, user, message, self){
   // Check if is broadcaster or mod
   var isBroadcaster = (user.username == config.channels[0] ? true : false);
   var isMod = (user['user-type'] == 'mod' ? true : false);
+
+  // Add this chat message timestamp to the active chatters object
+  // if(!isBroadcaster){
+    activeChatters[user.username] = Moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+  // }
 
   // Return if there is not a command
   if(!message.match(/^!\w+/g)){
@@ -108,14 +146,20 @@ chatBot.on('chat', function(channel, user, message, self){
 
   // Check if command is an admin command
   if(specialCommands.indexOf(command) > -1){
-    if(!isBroadcaster && !isMod){
-      // Return if user does not have permission
-      chatBot.action(channel, "You do not have permission to use that command.");
-      return true;
+    var canUseAdminCommand = function() {
+      if(!isBroadcaster && !isMod){
+        return false;
+      }else{
+        return true;
+      }
     }
     // Switch over the command and do admin functions
     switch (command) {
       case '!addcom':
+        if (!canUseAdminCommand){
+          chatBot.action(channel, "You do not have permission to use that command.");
+          return true;
+        }
         var userLevel = null;
         var commandTrigger = words[1];
         var commandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
@@ -134,6 +178,10 @@ chatBot.on('chat', function(channel, user, message, self){
         });
       break;
       case '!editcom':
+        if (!canUseAdminCommand){
+          chatBot.action(channel, "You do not have permission to use that command.");
+          return true;
+        }
         var commandResponseEdit = message.match(/!\S+\s*([^!]+)$/)[1];
         Command.update({
           commandTrigger: words[1]
@@ -149,6 +197,10 @@ chatBot.on('chat', function(channel, user, message, self){
         });
       break;
       case '!delcom':
+        if (!canUseAdminCommand){
+          chatBot.action(channel, "You do not have permission to use that command.");
+          return true;
+        }
         Command.findOneAndRemove({
           commandTrigger: words[1]
         }, function(err){
@@ -205,12 +257,10 @@ chatBot.on('chat', function(channel, user, message, self){
             return true;
           }
           if(foundUser){
-            console.log('found user');
             // The user has been found in the bank
             var memberMessage = template("You have a total of ${currency} Tax Dollars and have logged ${minutes} minutes. You have been a member since ${time}.",{time: Moment(foundUser.created_at).format('MMMM DD, YYYY'),minutes: foundUser.minutes, currency: foundUser.currency});
             chatBot.action(channel, memberMessage);
           }else{
-            console.log('did not find user');
             // The user is not in the bank
             var noUserMessage = template("You are not in the bank and do not have any currency, you can join the bank by typing !joinbank.");
             chatBot.action(channel, noUserMessage);
