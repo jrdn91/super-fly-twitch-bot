@@ -33,23 +33,17 @@ var minutes = null;
 var messagesInterval = null;
 
 var currencyInterval = null;
-var lastViewers = [];
 
-var activeChatters = {};
+var activeChatterTimestamps = {};
 
 module.exports.startBot = function(req,res){
   // Connect chatBot
   chatBot.connect();
   chatBot.once('join', function(channel, username){
     isConnected = true;
-    chatBot.api({
-      url:"http://tmi.twitch.tv/group/user/totally_rand0ms/chatters",
-    },function(req,res,body){
-      var currentViewers = JSON.parse(body)
-      lastViewers = currentViewers.chatters.viewers;
-    });
     chatBot.color("channel", "Firebrick");
-    chatBot.action(channel, 'Hello there!');
+    // chatBot.action(channel, 'Hello there!');
+    activeChatterTimestamps = {};
     if (req.socket.writable)
       res.json({action:'joined'});
   });
@@ -77,19 +71,23 @@ module.exports.startBot = function(req,res){
     },function(req,res,body){
       var body = JSON.parse(body);
       var currentViewers = body.chatters.viewers.concat(body.chatters.moderators);
-      console.log(body);
-      function exists(value) {
-        return lastViewers.indexOf(value) >= 0;
-      }
-      var activeViewers = currentViewers.filter(exists);
+      var currentTimestamp = Moment(new Date()).format('HH:mm:ss');
+      var activeViewers = currentViewers.map(function(user){
+        if(user in activeChatterTimestamps){
+          var userTimestamp = activeChatterTimestamps[user];
+          var duration = Moment.duration(Moment(currentTimestamp,'HH:mm:ss').diff(Moment(userTimestamp,'HH:mm:ss')));
+          var elapsedTime = duration.asMinutes();
+          if(elapsedTime < 10){
+            return user;
+          }
+        }
+      });
       User.update({'username':{$in:activeViewers}},{$inc:{currency:1,minutes:1}},{ multi: true },function(err,docs){
         if(err){
           console.log(err);
           return true;
         }
-        console.log(docs);
       });
-      lastViewers = currentViewers;
     });
   },60000);
 };
@@ -99,8 +97,8 @@ module.exports.stopBot = function(req,res){
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
-    lastViewers = null;
-    // clearInterval(messagesInterval);
+    clearInterval(messagesInterval);
+    clearInterval(currencyInterval);
     if (req.socket.writable)
       res.json({action:'disconnected',reason:reason});
   });
@@ -112,7 +110,13 @@ module.exports.checkConnectionStatus = function(req,res){
     res.json({connected:false});
   }
 }
-chatBot.on('chat', function(channel, user, message, self){
+chatBot.on('chat',function(channel, user, message, self){
+  if(self){
+    return true;
+  }
+  activeChatterTimestamps[user.username] = Moment(new Date()).format('HH:mm:ss');
+});
+chatBot.on(null, function(channel, user, message, self){
   if(self){
     return true;
   }
@@ -122,7 +126,7 @@ chatBot.on('chat', function(channel, user, message, self){
 
   // Add this chat message timestamp to the active chatters object
   // if(!isBroadcaster){
-    activeChatters[user.username] = Moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+    activeChatterTimestamps[user.username] = Moment(new Date()).format('HH:mm:ss');
   // }
 
   // Return if there is not a command
