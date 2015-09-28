@@ -33,8 +33,8 @@ router.route('/users')
   .post(function(req,res) { user.addUser(req,res) })
   .get(function(req,res) { user.getAllUsers(req,res) });
 
-router.route('/users/:username')
-  .put(function(req,res) { user.updateUser(req,res,req.params.username) })
-  .delete(function(req,res) { user.deleteUser(req,res,req.params.username) });
+router.route('/users/:user_id')
+  .put(function(req,res) { user.updateUser(req,res,req.params.user_id) })
+  .delete(function(req,res) { user.deleteUser(req,res,req.params.user_id) });
 
 module.exports = router;

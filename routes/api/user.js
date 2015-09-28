@@ -21,18 +21,11 @@ module.exports.getAllUsers = function(req, res) {
 };
 
 module.exports.updateUser = function(req, res, username) {
-  User.findOne({username: username}, function(err, user) {
+  User.findByIdAndUpdate(id, {$set: req.body.user}, function(err, user) {
     if (err) {
       res.send(err);
     }
-    user.currency = req.body.user.currency;
-    user.minutes = req.body.user.minutes;
-    user.save(function(err){
-      if (err) {
-        res.send(err);
-      }
-      res.json({user: user});
-    });
+    res.json({user: user});
   });
 };
 
@@ -45,8 +38,8 @@ module.exports.getUser = function(req, res, username) {
   });
 };
 
-module.exports.deleteUser = function(req, res, username) {
-  User.find({username: username}).remove(function(err){
+module.exports.deleteUser = function(req, res, id) {
+  User.findByIdAndRemove(id, function(err) {
     if (err) {
       res.send(err);
     }
