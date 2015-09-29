@@ -5,7 +5,7 @@ var router = express.Router();
 var bot = require('./api/bot');
 var commands = require('./api/command');
 var message = require('./api/message');
-var user = require('./api/user');
+var follower = require('./api/follower');
 
 // Endpoints
 router.route('/bot')
@@ -29,12 +29,12 @@ router.route('/messages/:message_id')
   .put(function(req,res) { message.updateMessage(req,res,req.params.message_id) })
   .delete(function(req,res) { message.deleteMessage(req,res,req.params.message_id) });
 
-router.route('/users')
-  .post(function(req,res) { user.addUser(req,res) })
-  .get(function(req,res) { user.getAllUsers(req,res) });
+router.route('/followers')
+  .post(function(req,res) { follower.addFollower(req,res) })
+  .get(function(req,res) { follower.getAllFollowers(req,res) });
 
-router.route('/users/:user_id')
-  .put(function(req,res) { user.updateUser(req,res,req.params.user_id) })
-  .delete(function(req,res) { user.deleteUser(req,res,req.params.user_id) });
+router.route('/followers/:follower_id')
+  .put(function(req,res) { follower.updateFollower(req,res,req.params.follower_id) })
+  .delete(function(req,res) { follower.deleteFollower(req,res,req.params.follower_id) });
 
 module.exports = router;

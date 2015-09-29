@@ -5,7 +5,7 @@ var Moment = require('moment');
 var mongoose = require('mongoose');
 var Command = require('../../models/command');
 var Message = require('../../models/message');
-var User = require('../../models/user');
+var Follower = require('../../models/follower');
 
 
 // Regex's
@@ -82,7 +82,7 @@ module.exports.startBot = function(req,res){
           }
         }
       });
-      User.update({'username':{$in:activeViewers}},{$inc:{currency:1,minutes:1}},{ multi: true },function(err,docs){
+      Follower.update({'username':{$in:activeViewers}},{$inc:{currency:1,minutes:1}},{ multi: true },function(err,docs){
         if(err){
           console.log(err);
           return true;
@@ -110,13 +110,13 @@ module.exports.checkConnectionStatus = function(req,res){
     res.json({connected:false});
   }
 }
-chatBot.on('chat',function(channel, user, message, self){
+chatBot.on(null,function(channel, user, message, self){
   if(self){
     return true;
   }
   activeChatterTimestamps[user.username] = Moment(new Date()).format('HH:mm:ss');
 });
-chatBot.on(null, function(channel, user, message, self){
+chatBot.on('chat', function(channel, user, message, self){
   if(self){
     return true;
   }
@@ -168,7 +168,7 @@ chatBot.on(null, function(channel, user, message, self){
         var commandTrigger = words[1];
         var commandResponse = message.match(/!\S+\s*([^!]+)$/)[1];
         if(words[1].match(/-ul=(\w+)/)){
-          // User level for command is defined
+          // Follower level for command is defined
           userLevel = words[1].match(/-ul=(\w+)/)[1];
           commandTrigger = words[2];
         }
@@ -218,7 +218,7 @@ chatBot.on(null, function(channel, user, message, self){
       break;
       case '!joinbank':
         // user wants to start collecting currency
-        User.findOne({username: user.username},function(err, foundUser){
+        Follower.findOne({username: user.username},function(err, foundUser){
           if (err) {
             console.log(err);
             return true;
@@ -229,7 +229,7 @@ chatBot.on(null, function(channel, user, message, self){
             chatBot.action(channel, memberMessage);
           }else{
             // The user is not in the bank
-            var newUser = new User({
+            var newUser = new Follower({
               username: user.username
             });
             newUser.save(function(err) {
@@ -245,7 +245,7 @@ chatBot.on(null, function(channel, user, message, self){
       break;
       case '!leavebank':
         // user wants to start collecting currency
-        User.findOne({username: user.username}).remove(function(err){
+        Follower.findOne({username: user.username}).remove(function(err){
           if (err) {
             res.send(err);
           }
@@ -255,7 +255,7 @@ chatBot.on(null, function(channel, user, message, self){
       break;
       case '!balance':
         // user wants to start collecting currency
-        User.findOne({username: user.username},function(err, foundUser){
+        Follower.findOne({username: user.username},function(err, foundUser){
           if (err) {
             console.log(err);
             return true;
