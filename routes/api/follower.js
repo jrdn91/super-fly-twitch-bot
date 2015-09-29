@@ -20,7 +20,7 @@ module.exports.getAllFollowers = function(req, res) {
   });
 };
 
-module.exports.updateFollower = function(req, res, followername) {
+module.exports.updateFollower = function(req, res, id) {
   Follower.findByIdAndUpdate(id, {$set: req.body.follower}, function(err, follower) {
     if (err) {
       res.send(err);
@@ -29,8 +29,8 @@ module.exports.updateFollower = function(req, res, followername) {
   });
 };
 
-module.exports.getFollower = function(req, res, followername) {
-  Follower.find({followername:followername},function(err, followers) {
+module.exports.getFollower = function(req, res, id) {
+  Follower.findById(id,function(err, follower) {
       if (err) {
         res.send(err);
       }
