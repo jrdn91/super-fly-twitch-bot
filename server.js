@@ -33,7 +33,7 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
-var api = require('./routes/api');
+var api = require('./app/routes/api');
 
 app.use('/api/v'+apiVersion, api);
 
