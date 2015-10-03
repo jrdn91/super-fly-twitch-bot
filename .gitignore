@@ -1,4 +1,5 @@
 node_modules
+client
 config.js
 commands.js
 messages.js
