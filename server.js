@@ -40,4 +40,5 @@ var api = require('./app/routes/api');
 
 app.use('/api/v'+apiVersion, api);
 
-app.listen(3000);
+var port = process.env.PORT || 3000;
+app.listen(port);
