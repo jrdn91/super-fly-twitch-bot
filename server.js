@@ -39,6 +39,7 @@ app.use(allowCrossDomain);
 var api = require('./app/routes/api');
 
 app.use('/api/v'+apiVersion, api);
+app.use(express.static(__dirname + '/client'));
 
 var port = process.env.PORT || 3000;
 app.listen(port);
