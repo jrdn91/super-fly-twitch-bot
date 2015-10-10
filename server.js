@@ -9,7 +9,8 @@ var logger = require('morgan');
 
 var apiVersion = 1;
 
-mongoose.connect('mongodb://localhost:27017/twitchbot');
+var mongoDB = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/twitchbot';
+mongoose.connect(mongoDB);
 
 var app = express();
 
