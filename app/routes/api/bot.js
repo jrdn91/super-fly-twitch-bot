@@ -40,7 +40,7 @@ module.exports.startBot = function(req,res){
   chatBot.once('join', function(channel, username){
     isConnected = true;
     chatBot.color("channel", "Firebrick");
-    // chatBot.action(channel, 'Hello there!');
+    chatBot.action(channel, "Hello there! I am the chat bot for this channel, I'm a custom bot made by MaTaX91, if you have suggestions for me let MaTaX know!");
     activeChatterTimestamps = {};
     if (req.socket.writable)
       res.json({action:'joined'});
