@@ -1,5 +1,3 @@
-var config = require('../../../config');
-
 var Moment = require('moment');
 
 var mongoose = require('mongoose');
@@ -21,10 +19,10 @@ var chatBotOptions = {
     debug: true,
   },
   identity: {
-    username: config.username,
-    password: config.password
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD
   },
-  channels: config.channels
+  channels: ['matax91']
 };
 var chatBot = new irc.client(chatBotOptions);
 var isConnected = false;
@@ -59,7 +57,7 @@ module.exports.startBot = function(req,res){
       }
       if(docs.length > 0){
         for (var i = 0; i < docs.length; i++) {
-          chatBot.action(config.channels[0], docs[i].messageContent);
+          chatBot.action('matax91', docs[i].messageContent);
         }
       }
     });
@@ -67,7 +65,7 @@ module.exports.startBot = function(req,res){
   // Currency
   currencyInterval = setInterval(function(){
     chatBot.api({
-      url:"http://tmi.twitch.tv/group/user/"+config.channels[0]+"/chatters",
+      url:"http://tmi.twitch.tv/group/user/"+'matax91'+"/chatters",
     },function(req,res,body){
       var body = JSON.parse(body);
       var currentViewers = body.chatters.viewers.concat(body.chatters.moderators);
@@ -93,7 +91,7 @@ module.exports.startBot = function(req,res){
 };
 module.exports.stopBot = function(req,res){
   // Disconnect chatBot
-  chatBot.action(config.channels[0],"I'm out!");
+  chatBot.action('matax91',"I'm out!");
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
@@ -121,7 +119,7 @@ chatBot.on('chat', function(channel, user, message, self){
     return true;
   }
   // Check if is broadcaster or mod
-  var isBroadcaster = (user.username == config.channels[0] ? true : false);
+  var isBroadcaster = (user.username == 'matax91' ? true : false);
   var isMod = (user['user-type'] == 'mod' ? true : false);
 
   // Add this chat message timestamp to the active chatters object
