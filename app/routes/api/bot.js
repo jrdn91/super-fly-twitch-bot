@@ -270,7 +270,7 @@ chatBot.on('chat', function(channel, user, message, self){
         });
       break;
       default:
-        chatBot.action(channel, "This command is not yet implemented.");
+        console.log('Tried to use command not implemented yet');
       break;
     }
     return true;
