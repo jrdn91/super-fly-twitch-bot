@@ -91,7 +91,7 @@ module.exports.startBot = function(req,res){
 };
 module.exports.stopBot = function(req,res){
   // Disconnect chatBot
-  chatBot.action('matax91',"I'm out!");
+  chatBot.action('matax91',"I'm out! See you next time!");
   chatBot.disconnect();
   chatBot.once('disconnected', function(reason){
     isConnected = false;
