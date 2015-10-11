@@ -39,7 +39,7 @@ var api = require('./app/routes/api');
 app.use('/api/v'+apiVersion, api);
 app.use('/assets', express.static(__dirname + '/client/assets'));
 app.use(function(req, res, next) {
-  res.sendfile(__dirname + '/client/index.html');
+  res.sendFile(__dirname + '/client/index.html');
 });
 
 var port = process.env.PORT || 3000;
