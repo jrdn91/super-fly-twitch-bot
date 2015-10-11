@@ -303,11 +303,6 @@ chatBot.on('chat', function(channel, user, message, self){
           chatBot.action(channel, permissionError);
         }
       }
-    }else{
-      // Command was not found
-      var commandString = message.match(/!\w+/g);
-      var error = template("Sorry ${command} is not a valid command.",{command: commandString});
-      chatBot.action(channel, error);
     }
   });
 });
