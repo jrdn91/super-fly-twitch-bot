@@ -20,9 +20,9 @@
     "q": "^1.4.1",
     "tmi.js": "^0.0.23",
     "unirest": "^0.4.2"
+    "dotenv": "^1.2.0",
   },
   "devDependencies": {
-    "dotenv": "^1.2.0",
     "morgan": "^1.6.1"
   }
 }
