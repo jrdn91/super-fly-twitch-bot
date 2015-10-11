@@ -1,6 +1,3 @@
-var dotenv = require('dotenv');
-dotenv.load();
-
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
