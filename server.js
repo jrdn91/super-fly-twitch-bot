@@ -40,7 +40,10 @@ app.use(allowCrossDomain);
 var api = require('./app/routes/api');
 
 app.use('/api/v'+apiVersion, api);
-app.use(express.static(__dirname + '/client'));
+app.use('/assets', express.static(__dirname + '/client/assets'));
+app.use(function(req, res, next) {
+  res.sendfile(__dirname + '/client/index.html');
+});
 
 var port = process.env.PORT || 3000;
 app.listen(port);
