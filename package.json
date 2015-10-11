@@ -22,7 +22,6 @@
     "unirest": "^0.4.2"
   },
   "devDependencies": {
-    "dotenv": "^1.2.0",
     "morgan": "^1.6.1"
   }
 }
